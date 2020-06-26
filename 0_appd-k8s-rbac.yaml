@@ -1,0 +1,98 @@
+# list of appd components
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: appdynamics
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sa-appd-k8s
+  namespace: appdynamics
+---
+# access rights needed to read cluster information
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cr-appd-monitoring
+rules:
+  - apiGroups:
+      - ""
+      - apps
+      - autoscaling
+      - batch
+      - extensions
+      - policy
+      - rbac.authorization.k8s.io
+      - metrics.k8s.io
+    resources:
+      - componentstatuses
+      - configmaps
+      - daemonsets
+      - deployments
+      - events
+      - endpoints
+      - horizontalpodautoscalers
+      - ingress
+      - jobs
+      - limitranges
+      - namespaces
+      - nodes
+      - pods
+      - persistentvolumes
+      - persistentvolumeclaims
+      - resourcequotas
+      - replicasets
+      - replicationcontrollers
+      - serviceaccounts
+      - services
+      - statefulsets
+      - pods/log
+      - list
+      - secrets
+    verbs:
+      - get
+      - watch
+      - list
+  - apiGroups:
+      - appdynamics.com
+    resources:
+      - '*'
+      - clusteragents
+    verbs:
+      - '*'
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - configmaps
+      - secrets
+    verbs:
+      - "*"
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - replicasets
+      - daemonsets
+    verbs:
+      - "*"
+  - nonResourceURLs: ["*"]
+    verbs:
+      - get
+      - watch
+      - list
+---
+# give appd components access rights to the cluster
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: crb-appd-monitoring
+subjects:
+  - kind: ServiceAccount
+    name: sa-appd-k8s
+    namespace: appdynamics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cr-appd-monitoring

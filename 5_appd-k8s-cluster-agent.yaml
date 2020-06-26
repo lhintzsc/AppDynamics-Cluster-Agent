@@ -1,0 +1,15 @@
+apiVersion: appdynamics.com/v1alpha1
+kind: Clusteragent
+metadata:
+  name: k8s-cluster-agent
+  namespace: appdynamics
+spec:
+  appName: "TBA"
+  controllerUrl: "https://customer.saas.appdynamics.com:443"
+  account: "customer"
+  # docker image info
+  image: "appdynamics/cluster-agent:latest"
+  serviceAccountName: sa-appd-k8s
+  proxyUrl: "http://host:80"
+  logLevel: "INFO" # increase log level
+  stdoutLogging: "true" # send messages to STDOUT
